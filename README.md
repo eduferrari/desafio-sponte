@@ -19,7 +19,7 @@ Para tal, a aplicação precisará suportar os seguintes contextos de negócio:
 
 Como também atender o fluxo padrão de negócio da matrícula, demonstrado abaixo:
 
-![](RackMultipart20201104-4-16gw9lu_html_4dbdba09d32b0c62.gif)
+![](/Images/RackMultipart20201104-4-16gw9lu_html_4dbdba09d32b0c62.png)
 
 ## **O que vamos avaliar**
 
