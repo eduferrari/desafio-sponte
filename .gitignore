@@ -26,3 +26,5 @@ node_modules/
 *.webinfo
 vwd.webinfo
 *.refresh
+**/[Oo]bj/*
+**/[Db]ebug/*
