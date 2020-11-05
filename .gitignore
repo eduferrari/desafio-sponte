@@ -28,3 +28,4 @@ vwd.webinfo
 *.refresh
 **/[Oo]bj/*
 **/[Db]ebug/*
+/Api/Api/bin/Debug/netcoreapp3.1
