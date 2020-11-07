@@ -102,7 +102,7 @@ namespace Api.Controllers
                 }
                 else return BadRequest("Não será possível atualizar, os dados informados são iguais a outro curso já cadastrado!");
 
-                return NoContent();
+                return Ok("Dados do aluno atualizados com sucesso!");
             }
         }
 
@@ -122,7 +122,7 @@ namespace Api.Controllers
 
                     return CreatedAtAction("GetAlunos", new { id = alunos.AlunoId }, alunos);
                 }
-                else return BadRequest("Já existe um curso com as mesmas caracteristicas cadastrado!");
+                else return BadRequest("Já existe um aluno cadastado com esse CPF!");
             }
             catch (Exception ex)
             {
