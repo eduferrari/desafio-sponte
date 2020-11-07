@@ -18,6 +18,7 @@ namespace Api.Models
         public virtual DbSet<Alunos> Alunos { get; set; }
         public virtual DbSet<Cursos> Cursos { get; set; }
         public virtual DbSet<Matriculas> Matriculas { get; set; }
+        public virtual DbSet<Usuarios> Usuarios { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -115,6 +116,37 @@ namespace Api.Models
                     .IsRequired()
                     .HasMaxLength(10)
                     .HasDefaultValueSql("'0000-00-00'");
+            });
+
+            modelBuilder.Entity<Usuarios>(entity =>
+            {
+                entity.HasKey(e => e.UsuarioId)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("usuarios");
+
+                entity.Property(e => e.UsuarioId)
+                    .HasColumnName("UsuarioID")
+                    .HasColumnType("int(10) unsigned");
+
+                entity.Property(e => e.Ativo)
+                    .HasColumnType("tinyint(1) unsigned")
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .HasDefaultValueSql("''");
+
+                entity.Property(e => e.Nome)
+                    .IsRequired()
+                    .HasMaxLength(60)
+                    .HasDefaultValueSql("''");
+
+                entity.Property(e => e.Senha)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasDefaultValueSql("''");
             });
 
             OnModelCreatingPartial(modelBuilder);

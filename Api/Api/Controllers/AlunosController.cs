@@ -11,22 +11,22 @@ namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CursosController : ControllerBase
+    public class AlunosController : ControllerBase
     {
         private readonly dbsponteContext db;
 
-        public CursosController(dbsponteContext context)
+        public AlunosController(dbsponteContext context)
         {
             db = context;
         }
 
-        // GET: api/Cursos
+        // GET: api/Alunos
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cursos>>> GetCursos()
+        public async Task<ActionResult<IEnumerable<Alunos>>> GetAlunos()
         {
             try
             {
-                return await db.Cursos.ToListAsync();
+                return await db.Alunos.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -38,20 +38,20 @@ namespace Api.Controllers
             }
         }
 
-        // GET: api/Cursos/5
+        // GET: api/Alunos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cursos>> GetCursos(int id)
+        public async Task<ActionResult<Alunos>> GetAlunos(int id)
         {
             try
             {
-                var cursos = await db.Cursos.FindAsync(id);
+                var alunos = await db.Alunos.FindAsync(id);
 
-                if (cursos == null)
+                if (alunos == null)
                 {
-                    return NotFound("Curso não identificado ou deletado!");
+                    return NotFound("Aluno não encotrado ou deletado!");
                 }
 
-                return cursos;
+                return alunos;
             }
             catch (Exception ex)
             {
@@ -63,33 +63,32 @@ namespace Api.Controllers
             }
         }
 
-        // PUT: api/Cursos/5
+        // PUT: api/Alunos/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCursos(int id, Cursos cursos)
+        public async Task<IActionResult> PutAlunos(int id, Alunos alunos)
         {
-            if (id != cursos.CursoId)
+            if (id != alunos.AlunoId)
             {
-                return BadRequest("Curso não encontrado para atualização!");
+                return NotFound("Aluno não encontrado para atualização!");
             }
             else
             {
+                db.Entry(alunos).State = EntityState.Modified;
 
-                var oCurso = await (from r in db.Cursos where r.Nome == cursos.Nome && r.DisciplinasAssociadas == cursos.DisciplinasAssociadas && r.CursoId != cursos.CursoId select new { r.CursoId }).FirstOrDefaultAsync();
-                if (oCurso == null)
+                var oAluno = await (from r in db.Alunos where r.Cpf == alunos.Cpf && r.AlunoId != alunos.AlunoId select new { r.AlunoId }).FirstOrDefaultAsync();
+                if (oAluno == null)
                 {
-                    db.Entry(cursos).State = EntityState.Modified;
-
                     try
                     {
                         await db.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!CursosExists(id))
+                        if (!AlunosExists(id))
                         {
-                            return NotFound("Curso não encontrado!");
+                            return NotFound("Aluno não encontrado!");
                         }
                         else
                         {
@@ -100,32 +99,30 @@ namespace Api.Controllers
                     {
                         Dispose(true);
                     }
-
-                    return NoContent();
                 }
                 else return BadRequest("Não será possível atualizar, os dados informados são iguais a outro curso já cadastrado!");
-            }
 
+                return NoContent();
+            }
         }
 
-        // POST: api/Cursos
+        // POST: api/Alunos
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Cursos>> PostCursos(Cursos cursos)
+        public async Task<ActionResult<Alunos>> PostAlunos(Alunos alunos)
         {
             try
             {
-                var oCurso = await (from r in db.Cursos where r.Nome == cursos.Nome && r.DisciplinasAssociadas == cursos.DisciplinasAssociadas select new { r.CursoId }).FirstOrDefaultAsync();
+                var oCurso = await (from r in db.Alunos where r.Cpf == alunos.Cpf select new { r.AlunoId }).FirstOrDefaultAsync();
                 if (oCurso == null)
                 {
-                    db.Cursos.Add(cursos);
+                    db.Alunos.Add(alunos);
                     await db.SaveChangesAsync();
 
-                    return CreatedAtAction("GetCursos", new { id = cursos.CursoId }, cursos);
+                    return CreatedAtAction("GetAlunos", new { id = alunos.AlunoId }, alunos);
                 }
                 else return BadRequest("Já existe um curso com as mesmas caracteristicas cadastrado!");
-
             }
             catch (Exception ex)
             {
@@ -137,22 +134,22 @@ namespace Api.Controllers
             }
         }
 
-        // DELETE: api/Cursos/5
+        // DELETE: api/Alunos/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Cursos>> DeleteCursos(int id)
+        public async Task<ActionResult<Alunos>> DeleteAlunos(int id)
         {
             try
             {
-                var cursos = await db.Cursos.FindAsync(id);
-                if (cursos == null)
+                var alunos = await db.Alunos.FindAsync(id);
+                if (alunos == null)
                 {
                     return NotFound();
                 }
 
-                db.Cursos.Remove(cursos);
+                db.Alunos.Remove(alunos);
                 await db.SaveChangesAsync();
 
-                return cursos;
+                return alunos;
             }
             catch (Exception ex)
             {
@@ -164,9 +161,9 @@ namespace Api.Controllers
             }
         }
 
-        private bool CursosExists(int id)
+        private bool AlunosExists(int id)
         {
-            return db.Cursos.Any(e => e.CursoId == id);
+            return db.Alunos.Any(e => e.AlunoId == id);
         }
 
         private void Dispose(bool disposing)
