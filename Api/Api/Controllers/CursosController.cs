@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using Api.Models;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Api.Models;
 
 namespace Api.Controllers
 {
@@ -63,19 +62,14 @@ namespace Api.Controllers
             }
         }
 
-        // PUT: api/Cursos/5
+        // PUT: api/Cursos/
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCursos(int id, Cursos cursos)
+        [HttpPut]
+        public async Task<ActionResult<Cursos>> PutCursos([FromBody] Cursos cursos)
         {
-            if (id != cursos.CursoId)
+            if (cursos.CursoId > 0)
             {
-                return BadRequest("Curso não encontrado para atualização!");
-            }
-            else
-            {
-
                 var oCurso = await (from r in db.Cursos where r.Nome == cursos.Nome && r.DisciplinasAssociadas == cursos.DisciplinasAssociadas && r.CursoId != cursos.CursoId select new { r.CursoId }).FirstOrDefaultAsync();
                 if (oCurso == null)
                 {
@@ -83,17 +77,21 @@ namespace Api.Controllers
 
                     try
                     {
-                        await db.SaveChangesAsync();
+                        if (!string.IsNullOrEmpty(cursos.Nome) && cursos.Duracao > 0 && !string.IsNullOrEmpty(cursos.DataLimiteMatricula) && !string.IsNullOrEmpty(cursos.Custo) && !string.IsNullOrEmpty(cursos.DisciplinasAssociadas))
+                        {
+                            await db.SaveChangesAsync();
+                        }
+                        else return BadRequest("Preencha todos os campos para prosseguir!");
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!CursosExists(id))
+                        if (!CursosExists(cursos.CursoId))
                         {
                             return NotFound("Curso não encontrado!");
                         }
                         else
                         {
-                            throw;
+                            return Ok("Curso atualizado com sucesso!");
                         }
                     }
                     finally
@@ -101,10 +99,11 @@ namespace Api.Controllers
                         Dispose(true);
                     }
 
-                    return NoContent();
+                    return Ok("Curso atualizado com sucesso!");
                 }
                 else return BadRequest("Não será possível atualizar, os dados informados são iguais a outro curso já cadastrado!");
             }
+            else return BadRequest("Curso não encontrado para atualização!");
 
         }
 
@@ -112,20 +111,23 @@ namespace Api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Cursos>> PostCursos(Cursos cursos)
+        public async Task<ActionResult<Cursos>> PostCursos([FromBody] Cursos cursos)
         {
             try
             {
                 var oCurso = await (from r in db.Cursos where r.Nome == cursos.Nome && r.DisciplinasAssociadas == cursos.DisciplinasAssociadas select new { r.CursoId }).FirstOrDefaultAsync();
                 if (oCurso == null)
                 {
-                    db.Cursos.Add(cursos);
-                    await db.SaveChangesAsync();
+                    if (!string.IsNullOrEmpty(cursos.Nome) && cursos.Duracao > 0 && !string.IsNullOrEmpty(cursos.DataLimiteMatricula) && !string.IsNullOrEmpty(cursos.Custo) && !string.IsNullOrEmpty(cursos.DisciplinasAssociadas))
+                    {
+                        db.Cursos.Add(cursos);
+                        await db.SaveChangesAsync();
 
-                    return CreatedAtAction("GetCursos", new { id = cursos.CursoId }, cursos);
+                        return CreatedAtAction("GetCursos", new { id = cursos.CursoId }, cursos);
+                    }
+                    else return BadRequest("Preencha todos os campos para prosseguir!");
                 }
                 else return BadRequest("Já existe um curso com as mesmas caracteristicas cadastrado!");
-
             }
             catch (Exception ex)
             {

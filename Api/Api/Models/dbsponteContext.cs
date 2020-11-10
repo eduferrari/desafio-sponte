@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Api.Models
 {
@@ -78,6 +76,11 @@ namespace Api.Models
                 entity.Property(e => e.CursoId)
                     .HasColumnName("CursoID")
                     .HasColumnType("int(10) unsigned");
+
+                entity.Property(e => e.Custo)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.DataLimiteMatricula)
                     .IsRequired()

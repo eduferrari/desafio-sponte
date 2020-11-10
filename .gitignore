@@ -29,3 +29,4 @@ vwd.webinfo
 **/[Oo]bj/*
 **/[Db]ebug/*
 /Api/Api/bin/Debug/netcoreapp3.1
+/Ui/Ui/wwwroot/media/avatar

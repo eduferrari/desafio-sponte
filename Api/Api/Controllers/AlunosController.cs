@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
+using Api.Models;
+using Api.App_Code;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Api.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Api.Controllers
 {
@@ -14,10 +17,12 @@ namespace Api.Controllers
     public class AlunosController : ControllerBase
     {
         private readonly dbsponteContext db;
+        private readonly IWebHostEnvironment _host;
 
-        public AlunosController(dbsponteContext context)
+        public AlunosController(dbsponteContext context, IWebHostEnvironment host)
         {
             db = context;
+            this._host = host;
         }
 
         // GET: api/Alunos
@@ -66,15 +71,34 @@ namespace Api.Controllers
         // PUT: api/Alunos/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAlunos(int id, Alunos alunos)
+        [HttpPut]
+        public async Task<IActionResult> PutAlunos([FromBody] IFormFile arquivo, Alunos alunos)
         {
-            if (id != alunos.AlunoId)
+            if (alunos.AlunoId > 0)
             {
-                return NotFound("Aluno não encontrado para atualização!");
-            }
-            else
-            {
+                if (arquivo.ContentType.Length > 0)
+                {
+                    string path = _host.WebRootPath + "/arquivos/avatar";
+
+                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+                    //Valida tamanha do arquivo: Padrão = 1 MB
+                    int MaxContentLength = 1024 * 1024 * 1;
+                    if (arquivo.ContentType.Length > MaxContentLength) throw new Exception("Por favor, envie um arquivo até 1 mb.");
+
+                    //Valida extensões de arquivos: Padrão = .jpg, .gif, .png
+                    var ext = arquivo.FileName.Substring(arquivo.FileName.LastIndexOf('.'));
+                    IList<string> AllowedFileExtensions = new List<string> { ".jpg", ".gif", ".png" };
+                    if (!AllowedFileExtensions.Contains(ext.ToLower())) throw new Exception("Por favor, envie uma imagem do tipo .jpg,.gif,.png.");
+
+                    using (FileStream filestream = System.IO.File.Create(path + UsefulValidations.MakeUniqueFilename(path, arquivo.FileName)))
+                    {
+                        await arquivo.CopyToAsync(filestream);
+                        filestream.Flush();
+                        alunos.Foto = filestream.Name;
+                    }
+                }
+
                 db.Entry(alunos).State = EntityState.Modified;
 
                 var oAluno = await (from r in db.Alunos where r.Cpf == alunos.Cpf && r.AlunoId != alunos.AlunoId select new { r.AlunoId }).FirstOrDefaultAsync();
@@ -82,17 +106,21 @@ namespace Api.Controllers
                 {
                     try
                     {
-                        await db.SaveChangesAsync();
+                        if (!string.IsNullOrEmpty(alunos.Nome) && !string.IsNullOrEmpty(alunos.Email) && !string.IsNullOrEmpty(alunos.DataNascimento))
+                        {
+                            await db.SaveChangesAsync();
+                        }
+                        else return BadRequest("Preencha todos os campos para prosseguir!");
                     }
                     catch (DbUpdateConcurrencyException)
                     {
-                        if (!AlunosExists(id))
+                        if (!AlunosExists(alunos.AlunoId))
                         {
                             return NotFound("Aluno não encontrado!");
                         }
                         else
                         {
-                            throw;
+                            Ok("Dados do aluno atualizados com sucesso!");
                         }
                     }
                     finally
@@ -104,23 +132,52 @@ namespace Api.Controllers
 
                 return Ok("Dados do aluno atualizados com sucesso!");
             }
+            else return NotFound("Aluno não encontrado para atualização!");
         }
 
         // POST: api/Alunos
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Alunos>> PostAlunos(Alunos alunos)
+        public async Task<ActionResult<Alunos>> PostAlunos([FromBody] IFormFile arquivo, Alunos alunos)
         {
             try
             {
                 var oCurso = await (from r in db.Alunos where r.Cpf == alunos.Cpf select new { r.AlunoId }).FirstOrDefaultAsync();
                 if (oCurso == null)
                 {
-                    db.Alunos.Add(alunos);
-                    await db.SaveChangesAsync();
+                    if (arquivo != null && arquivo.ContentType.Length > 0)
+                    {
+                        string path = _host.WebRootPath + "/arquivos/avatar";
 
-                    return CreatedAtAction("GetAlunos", new { id = alunos.AlunoId }, alunos);
+                        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+                        //Valida tamanha do arquivo: Padrão = 1 MB
+                        int MaxContentLength = 1024 * 1024 * 1;
+                        if (arquivo.ContentType.Length > MaxContentLength) throw new Exception("Por favor, envie um arquivo até 1 mb.");
+
+                        //Valida extensões de arquivos: Padrão = .jpg, .gif, .png
+                        var ext = arquivo.FileName.Substring(arquivo.FileName.LastIndexOf('.'));
+                        IList<string> AllowedFileExtensions = new List<string> { ".jpg", ".gif", ".png" };
+                        if (!AllowedFileExtensions.Contains(ext.ToLower())) throw new Exception("Por favor, envie uma imagem do tipo .jpg,.gif,.png.");
+
+                        using (FileStream filestream = System.IO.File.Create(path + UsefulValidations.MakeUniqueFilename(path, arquivo.FileName)))
+                        {
+                            await arquivo.CopyToAsync(filestream);
+                            filestream.Flush();
+                            alunos.Foto = filestream.Name;
+                        }
+                    }
+                    else alunos.Foto = "";
+
+                    if (!string.IsNullOrEmpty(alunos.Nome) && !string.IsNullOrEmpty(alunos.Cpf) && !string.IsNullOrEmpty(alunos.Email) && !string.IsNullOrEmpty(alunos.DataNascimento))
+                    {
+                        db.Alunos.Add(alunos);
+                        await db.SaveChangesAsync();
+
+                        return CreatedAtAction("GetAlunos", new { id = alunos.AlunoId }, alunos);
+                    }
+                    else return BadRequest("Preencha todos os campos para prosseguir!");
                 }
                 else return BadRequest("Já existe um aluno cadastado com esse CPF!");
             }

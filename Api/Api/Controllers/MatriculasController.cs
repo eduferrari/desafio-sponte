@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using Api.Models;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Api.Models;
 
 namespace Api.Controllers
 {
