@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.VisualBasic;
 
 namespace Api.Controllers
 {
@@ -72,65 +73,68 @@ namespace Api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut]
-        public async Task<IActionResult> PutAlunos([FromBody] IFormFile arquivo, Alunos alunos)
+        public async Task<IActionResult> PutAlunos([FromForm] Alunos alunos, IEnumerable<IFormFile> files)
         {
             if (alunos.AlunoId > 0)
             {
-                if (arquivo.ContentType.Length > 0)
+                if (files.Count() > 0)
                 {
-                    string path = _host.WebRootPath + "/arquivos/avatar";
-
-                    if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-
-                    //Valida tamanha do arquivo: Padrão = 1 MB
-                    int MaxContentLength = 1024 * 1024 * 1;
-                    if (arquivo.ContentType.Length > MaxContentLength) throw new Exception("Por favor, envie um arquivo até 1 mb.");
-
-                    //Valida extensões de arquivos: Padrão = .jpg, .gif, .png
-                    var ext = arquivo.FileName.Substring(arquivo.FileName.LastIndexOf('.'));
-                    IList<string> AllowedFileExtensions = new List<string> { ".jpg", ".gif", ".png" };
-                    if (!AllowedFileExtensions.Contains(ext.ToLower())) throw new Exception("Por favor, envie uma imagem do tipo .jpg,.gif,.png.");
-
-                    using (FileStream filestream = System.IO.File.Create(path + UsefulValidations.MakeUniqueFilename(path, arquivo.FileName)))
+                    foreach (var arquivo in files)
                     {
-                        await arquivo.CopyToAsync(filestream);
-                        filestream.Flush();
-                        alunos.Foto = filestream.Name;
+                        if (arquivo != null && arquivo.Length > 0)
+                        {
+                            string path = _host.WebRootPath + "/media/avatar";
+
+                            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+                            //Valida tamanha do arquivo: Padrão = 1 MB
+                            int MaxContentLength = 1024 * 1024 * 1;
+                            if (arquivo.ContentType.Length > MaxContentLength) throw new Exception("Por favor, envie um arquivo até 1 mb.");
+
+                            //Valida extensões de arquivos: Padrão = .jpg, .gif, .png
+                            var ext = arquivo.FileName.Substring(arquivo.FileName.LastIndexOf('.'));
+                            IList<string> AllowedFileExtensions = new List<string> { ".jpg", ".gif", ".png" };
+                            if (!AllowedFileExtensions.Contains(ext.ToLower())) throw new Exception("Por favor, envie uma imagem do tipo .jpg,.gif,.png.");
+
+                            string fileName = UsefulValidations.MakeUniqueFilename(path, arquivo.FileName);
+
+                            using (FileStream filestream = System.IO.File.Create(path + fileName))
+                            {
+                                await arquivo.CopyToAsync(filestream);
+                                filestream.Flush();
+                                alunos.Foto = "/media/avatar/" + fileName;
+                            }
+                        }
                     }
                 }
 
                 db.Entry(alunos).State = EntityState.Modified;
 
-                var oAluno = await (from r in db.Alunos where r.Cpf == alunos.Cpf && r.AlunoId != alunos.AlunoId select new { r.AlunoId }).FirstOrDefaultAsync();
-                if (oAluno == null)
+                try
                 {
-                    try
+                    if (!string.IsNullOrEmpty(alunos.Nome) && !string.IsNullOrEmpty(alunos.Email) && !string.IsNullOrEmpty(alunos.DataNascimento))
                     {
-                        if (!string.IsNullOrEmpty(alunos.Nome) && !string.IsNullOrEmpty(alunos.Email) && !string.IsNullOrEmpty(alunos.DataNascimento))
-                        {
-                            await db.SaveChangesAsync();
-                        }
-                        else return BadRequest("Preencha todos os campos para prosseguir!");
+                        await db.SaveChangesAsync();
                     }
-                    catch (DbUpdateConcurrencyException)
+                    else return BadRequest("Preencha todos os campos para prosseguir!");
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!AlunosExists(alunos.AlunoId))
                     {
-                        if (!AlunosExists(alunos.AlunoId))
-                        {
-                            return NotFound("Aluno não encontrado!");
-                        }
-                        else
-                        {
-                            Ok("Dados do aluno atualizados com sucesso!");
-                        }
+                        return NotFound("Aluno não encontrado!");
                     }
-                    finally
+                    else
                     {
-                        Dispose(true);
+                        return StatusCode(200);
                     }
                 }
-                else return BadRequest("Não será possível atualizar, os dados informados são iguais a outro curso já cadastrado!");
+                finally
+                {
+                    Dispose(true);
+                }
 
-                return Ok("Dados do aluno atualizados com sucesso!");
+                return StatusCode(200);
             }
             else return NotFound("Aluno não encontrado para atualização!");
         }
@@ -139,33 +143,42 @@ namespace Api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Alunos>> PostAlunos([FromBody] IFormFile arquivo, Alunos alunos)
+        public async Task<ActionResult<Alunos>> PostAlunos([FromForm] Alunos alunos, IEnumerable<IFormFile> files)
         {
             try
             {
                 var oCurso = await (from r in db.Alunos where r.Cpf == alunos.Cpf select new { r.AlunoId }).FirstOrDefaultAsync();
                 if (oCurso == null)
                 {
-                    if (arquivo != null && arquivo.ContentType.Length > 0)
+                    if (files.Count() > 0)
                     {
-                        string path = _host.WebRootPath + "/arquivos/avatar";
-
-                        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-
-                        //Valida tamanha do arquivo: Padrão = 1 MB
-                        int MaxContentLength = 1024 * 1024 * 1;
-                        if (arquivo.ContentType.Length > MaxContentLength) throw new Exception("Por favor, envie um arquivo até 1 mb.");
-
-                        //Valida extensões de arquivos: Padrão = .jpg, .gif, .png
-                        var ext = arquivo.FileName.Substring(arquivo.FileName.LastIndexOf('.'));
-                        IList<string> AllowedFileExtensions = new List<string> { ".jpg", ".gif", ".png" };
-                        if (!AllowedFileExtensions.Contains(ext.ToLower())) throw new Exception("Por favor, envie uma imagem do tipo .jpg,.gif,.png.");
-
-                        using (FileStream filestream = System.IO.File.Create(path + UsefulValidations.MakeUniqueFilename(path, arquivo.FileName)))
+                        foreach (var arquivo in files)
                         {
-                            await arquivo.CopyToAsync(filestream);
-                            filestream.Flush();
-                            alunos.Foto = filestream.Name;
+                            if (arquivo != null && arquivo.Length > 0)
+                            {
+                                string path = _host.WebRootPath + "/media/avatar";
+
+                                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+                                //Valida tamanha do arquivo: Padrão = 1 MB
+                                int MaxContentLength = 1024 * 1024 * 1;
+                                if (arquivo.ContentType.Length > MaxContentLength) throw new Exception("Por favor, envie um arquivo até 1 mb.");
+
+                                //Valida extensões de arquivos: Padrão = .jpg, .gif, .png
+                                var ext = arquivo.FileName.Substring(arquivo.FileName.LastIndexOf('.'));
+                                IList<string> AllowedFileExtensions = new List<string> { ".jpg", ".gif", ".png" };
+                                if (!AllowedFileExtensions.Contains(ext.ToLower())) throw new Exception("Por favor, envie uma imagem do tipo .jpg,.gif,.png.");
+
+                                string fileName = UsefulValidations.MakeUniqueFilename(path, arquivo.FileName);
+
+                                using (FileStream filestream = System.IO.File.Create(path + fileName))
+                                {
+                                    await arquivo.CopyToAsync(filestream);
+                                    filestream.Flush();
+                                    alunos.Foto = "/media/avatar" + fileName;
+                                }
+                            }
+                            else alunos.Foto = "";
                         }
                     }
                     else alunos.Foto = "";
@@ -201,6 +214,12 @@ namespace Api.Controllers
                 if (alunos == null)
                 {
                     return NotFound();
+                }
+
+                if (!string.IsNullOrEmpty(alunos.Foto))
+                {
+                    var fileDelete = new FileInfo(alunos.Foto);
+                    if (fileDelete.Exists) fileDelete.Delete();
                 }
 
                 db.Alunos.Remove(alunos);

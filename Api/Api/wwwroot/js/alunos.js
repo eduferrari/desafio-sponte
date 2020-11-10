@@ -10,27 +10,25 @@ function getItems() {
 
 function addItem() {
 
-    const itens = {
-        Nome: document.getElementById('txtAddNome').value.trim(),
-        Cpf: document.getElementById('txtAddCpf').value.trim(),
-        Email: document.getElementById('txtAddEmail').value.trim(),
-        DataNascimento: document.getElementById('txtAddDataNascimento').value.trim()
-    };
+    var data = new FormData();
+    data.append("Nome", document.getElementById('txtAddNome').value.trim());
+    data.append("Cpf", document.getElementById('txtAddCpf').value.trim());
+    data.append("Email", document.getElementById('txtAddEmail').value.trim());
+    data.append("DataNascimento", document.getElementById('txtAddDataNascimento').value.trim());
+    data.append("files", $("#flAddFoto")[0].files[0]);
 
     $.ajax({
-        dataType: 'json',
-        enctype: 'multipart/form-data',
+        async: true,
         type: 'POST',
         url: uri,
-        data: JSON.stringify(itens),
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        success: function (data) {
-            swal("Parabéns!", "Curso adicionado com sucesso", "success");
+        contentType: false,
+        processData: false,
+        mimeType: "multipart/form-data",
+        data: data,
+        success: function () {
+            swal("Parabéns!", "Curso adicionado com sucesso!", "success");
             getItems();
-        }, error: function (error) {
+        }, error: function () {
             swal("Ops!", "Não foi possível adicionar o curso!", "error");
         }
     });
@@ -51,8 +49,6 @@ function deleteItem(id) {
 
 function displayEditForm(id) {
     const item = todos.find(item => item.alunoId === id);
-
-    console.info(item);
 
     document.getElementById('hdAlunoID').value = item.alunoId;
     document.getElementById('txtUpdNome').value = item.nome;

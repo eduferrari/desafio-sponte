@@ -1,4 +1,7 @@
-﻿namespace Api.Models
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+namespace Api.Models
 {
     public partial class Matriculas
     {

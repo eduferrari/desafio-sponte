@@ -66,52 +66,46 @@ namespace Api.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut]
-        public async Task<ActionResult<Cursos>> PutCursos([FromBody] Cursos cursos)
+        public async Task<ActionResult<Cursos>> PutCursos(Cursos cursos)
         {
             if (cursos.CursoId > 0)
             {
-                var oCurso = await (from r in db.Cursos where r.Nome == cursos.Nome && r.DisciplinasAssociadas == cursos.DisciplinasAssociadas && r.CursoId != cursos.CursoId select new { r.CursoId }).FirstOrDefaultAsync();
-                if (oCurso == null)
+                db.Entry(cursos).State = EntityState.Modified;
+
+                try
                 {
-                    db.Entry(cursos).State = EntityState.Modified;
-
-                    try
+                    if (!string.IsNullOrEmpty(cursos.Nome) && cursos.Duracao > 0 && !string.IsNullOrEmpty(cursos.DataLimiteMatricula) && !string.IsNullOrEmpty(cursos.Custo) && !string.IsNullOrEmpty(cursos.DisciplinasAssociadas))
                     {
-                        if (!string.IsNullOrEmpty(cursos.Nome) && cursos.Duracao > 0 && !string.IsNullOrEmpty(cursos.DataLimiteMatricula) && !string.IsNullOrEmpty(cursos.Custo) && !string.IsNullOrEmpty(cursos.DisciplinasAssociadas))
-                        {
-                            await db.SaveChangesAsync();
-                        }
-                        else return BadRequest("Preencha todos os campos para prosseguir!");
+                        await db.SaveChangesAsync();
                     }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!CursosExists(cursos.CursoId))
-                        {
-                            return NotFound("Curso não encontrado!");
-                        }
-                        else
-                        {
-                            return Ok("Curso atualizado com sucesso!");
-                        }
-                    }
-                    finally
-                    {
-                        Dispose(true);
-                    }
-
-                    return Ok("Curso atualizado com sucesso!");
+                    else return BadRequest("Preencha todos os campos para prosseguir!");
                 }
-                else return BadRequest("Não será possível atualizar, os dados informados são iguais a outro curso já cadastrado!");
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CursosExists(cursos.CursoId))
+                    {
+                        return NotFound("Curso não encontrado!");
+                    }
+                    else
+                    {
+                        return StatusCode(200);
+                    }
+                }
+                finally
+                {
+                    Dispose(true);
+                }
+
+                return StatusCode(200);
             }
             else return BadRequest("Curso não encontrado para atualização!");
-
         }
 
         // POST: api/Cursos
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Cursos>> PostCursos([FromBody] Cursos cursos)
+        public async Task<ActionResult<Cursos>> PostCursos(Cursos cursos)
         {
             try
             {
