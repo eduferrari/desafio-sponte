@@ -113,6 +113,10 @@ function addItem() {
             swal("Ops!", "Não foi possível efetuar sua matrícula!", "error");
         }
     });
+
+    getItems();
+    closeInput();
+    return false;
 }
 
 function deleteItem(id) {

@@ -8,106 +8,129 @@
 
 </head>
 <body>
-    <div class="jumbotron text-center">
-        <h1>Gerenciar cursos</h1>
-    </div>
 
-    <div class="container align-items-center">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">Opções</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <!-- form-cadastro -->
-        <div id="insertForm">
-            <h3>Adicionar</h3>
-            <form action="javascript:void(0);" enctype="multipart/form-data" method="POST" id="formAdd" onsubmit="addItem()" class="col-lg-6 offset-lg-3">
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="/pages/home/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/pages/alunos/index.html">Alunos</a></li>
+                <li class="nav-item active"><a class="nav-link" href="#">Cursos <span class="sr-only">(current)</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="/pages/matriculas/index.html">Matrículas</a></li>
+                <li class="nav-item"><a class="nav-link" href="/swagger" target="_blank">Documentação</a></li>
+            </ul>
+        </div>
+    </nav>
 
-                <div class="form-row justify-content-center">
-                    <div class="col-lg-12 my-2">
-                        <label>Nome do curso: </label>
-                        <input type="text" id="txtAddNome" class="form-control mb-2" placeholder="Nome do curso" required>
-                    </div>
-
-                    <div class="col-lg-4 my-2">
-                        <label for="txtAddDuracao">Duração do curso: </label>
-                        <input type="number" id="txtAddDuracao" min="1" max="99999999" class="form-control mb-2" required>
-                    </div>
-                    <div class="col-lg-4 my-2">
-                        <label for="txtAddDataLimiteMatricula">Data limite matrícula: </label>
-                        <input type="date" id="txtAddDataLimiteMatricula" class="form-control mb-2" onkeypress="$(this).mask('00/00/0000');" required>
-                    </div>
-                    <div class="col-lg-4 my-2">
-                        <label for="txtAddCusto">Valor do curso: </label>
-                        <input type="text" id="txtAddCusto" class="form-control mb-2" maxlength="10" onkeypress="$(this).mask('#.##0,00', {reverse: true});" required>
-                    </div>
-
-                    <div class="col-lg-12 my-2">
-                        <label for="txtAddDisciplinasAssociadas">Competências/disciplinas associadas: </label>
-                        <textarea id="txtAddDisciplinasAssociadas" class="form-control mb-2" rows="6" required></textarea>
-                    </div>
-
-                    <div class="col-lg-12 my-2">
-                        <input type="submit" value="Adicionar" class="btn btn-primary mb-2 btn-block" align="right">
-                    </div>
-                </div>
-            </form>
+    <main role="main">
+        <div class="jumbotron">
+            <div class="container">
+                <h1 class="display-3">Gerenciar cursos</h1>
+            </div>
         </div>
 
-        <!-- /form-atualiza -->
-        <div id="editForm" style="display:none;">
-            <h3>Editar <a onclick="closeInput()" aria-label="Close" class="mb-2">&#10006;</a></h3>
-            <form action="javascript:void(0);" enctype="multipart/form-data" id="formUpd" onsubmit="updateItem()" class="col-lg-6 offset-lg-3">
+        <div class="container">
 
-                <div class="form-row justify-content-center">
-                    <input type="hidden" id="hdCursoID">
+            <!-- form-cadastro -->
+            <div id="insertForm">
+                <h3>Adicionar</h3>
+                <form action="javascript:void(0);" enctype="multipart/form-data" method="POST" id="formAdd" onsubmit="addItem()" class="col-lg-12">
 
-                    <div class="col-lg-12 my-2">
-                        <label for="txtUpdNome">Nome do curso: </label>
-                        <input type="text" id="txtUpdNome" class="form-control mb-2" required>
-                    </div>
+                    <div class="form-row justify-content-center">
+                        <div class="col-lg-12 my-2">
+                            <label>Nome do curso: </label>
+                            <input type="text" id="txtAddNome" class="form-control mb-2" placeholder="Nome do curso" required>
+                        </div>
 
-                    <div class="col-lg-4 my-2">
-                        <label for="txtUpdDuracao">Duração do curso: </label>
-                        <input type="number" id="txtUpdDuracao" min="1" max="99999999" class="form-control mb-2" required>
-                    </div>
-                    <div class="col-lg-4 my-2">
-                        <label for="txtUpdDataLimiteMatricula">Data limite matrícula: </label>
-                        <input type="date" id="txtUpdDataLimiteMatricula" class="form-control mb-2" onkeypress="$(this).mask('00/00/0000');" required>
-                    </div>
-                    <div class="col-lg-4 my-2">
-                        <label for="txtUpdCusto">Valor do curso: </label>
-                        <input type="text" id="txtUpdCusto" class="form-control mb-2" maxlength="10" onkeypress="$(this).mask('#.##0,00', {reverse: true});" required>
-                    </div>
+                        <div class="col-lg-4 my-2">
+                            <label for="txtAddDuracao">Duração do curso: </label>
+                            <input type="number" id="txtAddDuracao" min="1" max="99999999" class="form-control mb-2" required>
+                        </div>
+                        <div class="col-lg-4 my-2">
+                            <label for="txtAddDataLimiteMatricula">Data limite matrícula: </label>
+                            <input type="date" id="txtAddDataLimiteMatricula" class="form-control mb-2" onkeypress="$(this).mask('00/00/0000');" required>
+                        </div>
+                        <div class="col-lg-4 my-2">
+                            <label for="txtAddCusto">Valor do curso: </label>
+                            <input type="text" id="txtAddCusto" class="form-control mb-2" maxlength="10" onkeypress="$(this).mask('#.##0,00', {reverse: true});" required>
+                        </div>
 
-                    <div class="col-lg-12 my-2">
-                        <label for="txtUpdDisciplinasAssociadas">Competências/disciplinas associadas: </label>
-                        <textarea id="txtUpdDisciplinasAssociadas" class="form-control mb-2" rows="6" required></textarea>
-                    </div>
+                        <div class="col-lg-12 my-2">
+                            <label for="txtAddDisciplinasAssociadas">Competências/disciplinas associadas: </label>
+                            <textarea id="txtAddDisciplinasAssociadas" class="form-control mb-2" rows="6" required></textarea>
+                        </div>
 
-                    <div class="col-lg-12 my-2">
-                        <input type="submit" value="Salvar" class="btn btn-primary mb-2 btn-block">
+                        <div class="col-lg-12 my-2">
+                            <input type="submit" value="Adicionar" class="btn btn-success mb-2 btn-block" align="right">
+                        </div>
                     </div>
+                </form>
+            </div>
 
-                </div>
-            </form>
+            <!-- /form-atualiza -->
+            <div id="editForm" style="display:none;">
+                <h3>Editar <a onclick="closeInput()" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></a></h3>
+                <form action="javascript:void(0);" enctype="multipart/form-data" id="formUpd" onsubmit="updateItem()" class="col-lg-12">
+
+                    <div class="form-row justify-content-center">
+                        <input type="hidden" id="hdCursoID">
+
+                        <div class="col-lg-12 my-2">
+                            <label for="txtUpdNome">Nome do curso: </label>
+                            <input type="text" id="txtUpdNome" class="form-control mb-2" required>
+                        </div>
+
+                        <div class="col-lg-4 my-2">
+                            <label for="txtUpdDuracao">Duração do curso: </label>
+                            <input type="number" id="txtUpdDuracao" min="1" max="99999999" class="form-control mb-2" required>
+                        </div>
+                        <div class="col-lg-4 my-2">
+                            <label for="txtUpdDataLimiteMatricula">Data limite matrícula: </label>
+                            <input type="date" id="txtUpdDataLimiteMatricula" class="form-control mb-2" onkeypress="$(this).mask('00/00/0000');" required>
+                        </div>
+                        <div class="col-lg-4 my-2">
+                            <label for="txtUpdCusto">Valor do curso: </label>
+                            <input type="text" id="txtUpdCusto" class="form-control mb-2" maxlength="10" onkeypress="$(this).mask('#.##0,00', {reverse: true});" required>
+                        </div>
+
+                        <div class="col-lg-12 my-2">
+                            <label for="txtUpdDisciplinasAssociadas">Competências/disciplinas associadas: </label>
+                            <textarea id="txtUpdDisciplinasAssociadas" class="form-control mb-2" rows="6" required></textarea>
+                        </div>
+
+                        <div class="col-lg-12 my-2">
+                            <input type="submit" value="Salvar" class="btn btn-success mb-2 btn-block">
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <!-- lista-registros -->
+            <h3>Listar todos os cursos <span class="lead text-center" id="counter"></span></h3>
+            <div class="table-responsive-sm">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Custo</th>
+                            <th scope="col">Limite Matricula</th>
+                            <th scope="col">Duração</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="list"></tbody>
+                </table>
+            </div>
+
         </div>
 
-        <!-- lista-registros -->
-        <h3>Listar todos os cursos <span class="lead text-center" id="counter"></span></h3>
-        <div class="table-responsive-sm">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Custo</th>
-                        <th scope="col">Limite Matricula</th>
-                        <th scope="col">Duração</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody id="list"></tbody>
-            </table>
-        </div>
-
-    </div>
+    </main>
 
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

@@ -63,7 +63,7 @@ namespace Api
 
             var options = new DefaultFilesOptions();
             options.DefaultFileNames.Clear();
-            options.DefaultFileNames.Add("index.html");
+            options.DefaultFileNames.Add("/pages/home/index.html");
             app.UseDefaultFiles(options);
             app.UseStaticFiles();
 

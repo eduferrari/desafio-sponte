@@ -26,10 +26,10 @@ function addItem() {
         mimeType: "multipart/form-data",
         data: data,
         success: function () {
-            swal("Parabéns!", "Curso adicionado com sucesso!", "success");
+            swal("Parabéns!", "Aluno adicionado com sucesso!", "success");
             getItems();
         }, error: function () {
-            swal("Ops!", "Não foi possível adicionar o curso!", "error");
+            swal("Ops!", "Não foi possível adicionar o aluno!", "error");
         }
     });
 }
@@ -62,31 +62,27 @@ function displayEditForm(id) {
 
 function updateItem() {
 
-    const itens = {
-        Nome: document.getElementById('txtAddNome').value.trim(),
-        Cpf: document.getElementById('txtAddCpf').value.trim(),
-        Email: document.getElementById('txtAddEmail').value.trim(),
-        DataNascimento: document.getElementById('txtAddDataNascimento').value.trim()
-    };
-
-    var files = document.getElementById('flAddFoto')[0].files;
-    if (files.length > 0) {
-        itens.append('arquivo', files[0]);
-    }
+    var data = new FormData();
+    data.append("AlunoID", document.getElementById('hdAlunoID').value.trim());
+    data.append("Nome", document.getElementById('txtUpdNome').value.trim());
+    data.append("Cpf", document.getElementById('txtUpdCpf').value.trim());
+    data.append("Email", document.getElementById('txtUpdEmail').value.trim());
+    data.append("DataNascimento", document.getElementById('txtUpdDataNascimento').value.trim());
+    data.append("files", $("#flUpdFoto")[0].files[0]);
 
     $.ajax({
-        dataType: 'json',
+        async: true,
         type: 'PUT',
         url: uri,
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(itens),
-        success: function (data) {
-            swal("Parabéns!", "Aluno alterado com sucesso", "success");
+        contentType: false,
+        processData: false,
+        mimeType: "multipart/form-data",
+        data: data,
+        success: function () {
+            swal("Parabéns!", "Aluno atualizado com sucesso!", "success");
             getItems();
-        }, error: function (error) {
-            swal("Ops!", "Não foi possível alterar o aluno!", "error");
+        }, error: function () {
+            swal("Ops!", "Não foi possível atualizar os dados do aluno!", "error");
         }
     });
 

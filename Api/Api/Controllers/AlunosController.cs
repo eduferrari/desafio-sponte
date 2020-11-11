@@ -83,7 +83,7 @@ namespace Api.Controllers
                     {
                         if (arquivo != null && arquivo.Length > 0)
                         {
-                            string path = _host.WebRootPath + "/media/avatar";
+                            string path = _host.WebRootPath + "/media/avatar/";
 
                             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
@@ -156,7 +156,7 @@ namespace Api.Controllers
                         {
                             if (arquivo != null && arquivo.Length > 0)
                             {
-                                string path = _host.WebRootPath + "/media/avatar";
+                                string path = _host.WebRootPath + "/media/avatar/";
 
                                 if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
@@ -175,7 +175,7 @@ namespace Api.Controllers
                                 {
                                     await arquivo.CopyToAsync(filestream);
                                     filestream.Flush();
-                                    alunos.Foto = "/media/avatar" + fileName;
+                                    alunos.Foto = "/media/avatar/" + fileName;
                                 }
                             }
                             else alunos.Foto = "";

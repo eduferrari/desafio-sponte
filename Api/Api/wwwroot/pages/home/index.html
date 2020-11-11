@@ -8,18 +8,75 @@
 
 </head>
 <body>
-    <div class="jumbotron text-center">
-        <h1>Selecione a opção</h1>
-    </div>
 
-    <div class="container align-items-center">
-        <div class="list-group">
-            <a href="/pages/alunos/index.html" class="list-group-item list-group-item-action">Alunos</a>
-            <a href="/pages/cursos/index.html" class="list-group-item list-group-item-action">Cursos</a>
-            <a href="/pages/matriculas/index.html" class="list-group-item list-group-item-action">Matrículas</a>
-            <a href="/swagger" target="_blank" class="list-group-item list-group-item-action">Documentação</a>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active"><a class="nav-link" href="">Home <span class="sr-only">(current)</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="/pages/alunos/index.html">Alunos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/pages/cursos/index.html">Cursos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/pages/matriculas/index.html">Matrículas</a></li>
+                <li class="nav-item"><a class="nav-link" href="/swagger" target="_blank">Documentação</a></li>
+            </ul>
         </div>
-    </div>
+    </nav>
+
+    <main role="main">
+
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="jumbotron">
+            <div class="container">
+                <h1 class="display-3">Desafio back-end Sponte</h1>
+                <p>Seu objetivo nesse desafio será desenvolver um API REST para gerenciamento de matrículas em uma escola de programação.</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Example row of columns -->
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Setup e dados do projeto</h2>
+                </div>
+
+                <div class="col-md-12">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Framework:  ASP .NET Core 3.1 - C# 8</li>
+                        <li class="list-group-item">ORM: Entity Framework Core</li>
+                        <li class="list-group-item">Formato dos dados: JSON</li>
+                        <li class="list-group-item">Dockerização da aplicação para entrega via containers</li>
+                    </ul>
+                </div>
+
+
+                <div class="col-md-12">
+                    <h2>Objetivo</h2>
+                    <p>Seu objetivo nesse desafio será desenvolver um API REST para gerenciamento de matrículas em uma escola de programação.</p>
+                    <p>Para tal, a aplicação precisará suportar os seguintes contextos de negócio:</p>
+                </div>
+
+                <div class="col-md-12">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Alunos(nome, cpf, foto, data de nascimento, email)</li>
+                        <li class="list-group-item">Cursos(nome, duração em horas, data de limite para matricula, custo, lista de competências ou disciplinas associadas)</li>
+                        <li class="list-group-item">Matricula(data, aluno, lista de cursos, valor total da matrícula)</li>
+                    </ul>
+                </div>
+
+                <div class="col-md-12">
+                    <p>Como também atender o fluxo padrão de negócio da matrícula, demonstrado abaixo:</p>
+                    <p><img src="/media/RackMultipart20201104-4-16gw9lu_html_4dbdba09d32b0c62.png" /></p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

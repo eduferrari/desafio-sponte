@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using WebRestApi.UsefulClasses;
 
 namespace Api.Controllers
 {
@@ -140,6 +141,8 @@ namespace Api.Controllers
                 {
                     db.Matriculas.Add(matriculas);
                     await db.SaveChangesAsync();
+
+                    SendMail.ConfirmaMatricula(matriculas, db);
 
                     return CreatedAtAction("GetMatriculas", new { id = matriculas.MatriculaId }, matriculas);
                 }
